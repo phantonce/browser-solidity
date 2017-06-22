@@ -35,7 +35,7 @@ function RighthandPanel (container, appAPI, events, opts) {
         <div id="menu">
           <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
           <ul id="options">
-            <li class="envView" title="Environment">Contract</li>
+            <li class="compileView" title="Environment">Contract</li>
             <li class="settingsView" title="Settings">Settings</li>
             <li class="publishView" title="Publish" >Files</li>
             <li class="debugView" title="Debugger">Debugger</li>

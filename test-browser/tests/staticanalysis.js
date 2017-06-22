@@ -32,7 +32,7 @@ module.exports = {
 function runTests (browser) {
   browser
     .waitForElementVisible('.newFile', 10000)
-    .click('.envView')
+    .click('.compileView')
   contractHelper.testContracts(browser, sources.sources['Untitled.sol'], ['Untitled.sol:TooMuchGas', 'Untitled.sol:test1', 'Untitled.sol:test2'], function () {
     browser
       .click('.staticanalysisView')
