@@ -2,7 +2,8 @@ var yo = require('yo-yo')
 var $ = require('jquery')
 
 var tabbedMenu = require('./tabbed-menu')
-var contractTab = require('./contract-tab')
+var compileTab = require('./compile-tab')
+var runTab = require('./run-tab')
 var settingsTab = require('./settings-tab')
 var analysisTab = require('./analysis-tab')
 var debuggerTab = require('./debugger-tab')
@@ -35,9 +36,10 @@ function RighthandPanel (container, appAPI, events, opts) {
         <div id="menu">
           <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
           <ul id="options">
-            <li class="compileView" title="Environment">Contract</li>
+            <li class="compileView" title="Compile">Compile</li>
+            <li class="runView" title="Run">Run</li>
             <li class="settingsView" title="Settings">Settings</li>
-            <li class="publishView" title="Publish" >Files</li>
+            <li class="publishView" title="Files" >Files</li>
             <li class="debugView" title="Debugger">Debugger</li>
             <li class="staticanalysisView" title="Static Analysis">Analysis</li>
             <li id="helpButton"><a href="https://remix.readthedocs.org" target="_blank" title="Open Documentation">Docs</a></li>
@@ -47,7 +49,8 @@ function RighthandPanel (container, appAPI, events, opts) {
       </div>
     </div>
   `
-  contractTab(optionViews, appAPI, events, opts)
+  compileTab(optionViews, appAPI, events, opts)
+  runTab(optionViews, appAPI, events, opts)
   settingsTab(optionViews, appAPI, events, opts)
   analysisTab(optionViews, appAPI, events, opts)
   debuggerTab(optionViews, appAPI, events, opts)
