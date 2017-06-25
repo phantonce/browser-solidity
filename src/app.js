@@ -576,7 +576,8 @@ var run = function () {
   var rhpEvents = {
     compiler: compiler.event,
     app: self.event,
-    udapp: udapp.event
+    udapp: udapp.event,
+    editor: editor.event
   }
   var righthandPanel = new RighthandPanel(document.body, rhpAPI, rhpEvents, {}) // eslint-disable-line
   // ----------------- editor resize ---------------
