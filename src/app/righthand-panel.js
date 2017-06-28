@@ -9,7 +9,10 @@ var analysisTab = require('./analysis-tab')
 var debuggerTab = require('./debugger-tab')
 var filesTab = require('./files-tab')
 
+// -------------- styling ----------------------
 var csjs = require('csjs-inject')
+var styleGuide = require('./style-guide')
+var styles = styleGuide()
 
 var css = csjs`
   .options {
@@ -18,7 +21,7 @@ var css = csjs`
       min-width: 65px;
       font-size: 0.9em;
       cursor: pointer;
-      background-color: transparent;
+      background-color: ${styles.colors.transparent};
       margin-right: 0.5em;
       font-size: 1em;
       text-align: center;
