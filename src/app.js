@@ -1,4 +1,4 @@
-/* global alert, confirm, prompt, Option, Worker, chrome */
+/* global alert, confirm, prompt, Option, Worker */
 'use strict'
 
 var async = require('async')
@@ -17,6 +17,7 @@ var Remixd = require('./lib/remixd')
 var Storage = require('./app/files/storage')
 var Browserfiles = require('./app/files/browser-files')
 var SharedFolder = require('./app/files/shared-folder')
+var ChromeCloudSync = require('./app/chrome-cloud-sync')
 var Config = require('./app/config')
 var Editor = require('./app/editor')
 var Renderer = require('./app/renderer')
@@ -41,6 +42,7 @@ window.addEventListener('message', function (ev) {
     loadFilesCallback(ev.data[1])
   }
 }, false)
+
 var run = function () {
   var self = this
   self.event = new EventManager()
@@ -52,6 +54,9 @@ var run = function () {
   filesProviders['localhost'] = new SharedFolder(remixd)
 
   var tabbedFiles = {} // list of files displayed in the tabs bar
+
+  var cloudsync = new ChromeCloudSync({ api: { filesProviders, confirm, refreshTabs: function () {} } })
+  cloudsync.event.register('ready', function (msg) { console.log(msg) })
 
   document.head.appendChild(yo`<title>Remix - Solidity IDE</title>`)
   document.head.appendChild(yo`<link rel="stylesheet" href="assets/css/pygment_trac.css">`)
@@ -145,59 +150,6 @@ setTimeout(function () {
       alert('Failed to store example contract in browser. Remix will not work properly. Please ensure Remix has access to LocalStorage. Safari in Private mode is known not to work.')
     }
   }
-
-  // ----------------- Chrome cloud storage sync --------------------
-
-  function chromeCloudSync () {
-    if (typeof chrome === 'undefined' || !chrome || !chrome.storage || !chrome.storage.sync) {
-      return
-    }
-
-    var obj = {}
-    var done = false
-    var count = 0
-
-    function check (key) {
-      chrome.storage.sync.get(key, function (resp) {
-        console.log('comparing to cloud', key, resp)
-        if (typeof resp[key] !== 'undefined' && obj[key] !== resp[key] && confirm('Overwrite "' + key + '"? Click Ok to overwrite local file with file from cloud. Cancel will push your local file to the cloud.')) {
-          console.log('Overwriting', key)
-          filesProviders['browser'].set(key, resp[key])
-        } else {
-          console.log('add to obj', obj, key)
-          filesProviders['browser'].get(key, (error, content) => {
-            if (error) {
-              console.log(error)
-            } else {
-              obj[key] = content
-            }
-          })
-        }
-        done++
-        if (done >= count) {
-          chrome.storage.sync.set(obj, function () {
-            console.log('updated cloud files with: ', obj, this, arguments)
-          })
-        }
-      })
-    }
-
-    for (var y in filesProviders['browser'].list()) {
-      console.log('checking', y)
-      filesProviders['browser'].get(y, (error, content) => {
-        if (error) {
-          console.log(error)
-        } else {
-          obj[y] = content
-          count++
-          check(y)
-        }
-      })
-    }
-  }
-
-  window.syncStorage = chromeCloudSync
-  chromeCloudSync()
 
   // ---------------- FilePanel --------------------
   // TODO: All FilePanel related CSS should move into file-panel.js
