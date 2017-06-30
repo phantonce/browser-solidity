@@ -1,4 +1,10 @@
+'use strict'
+var yo = require('yo-yo')
+
 module.exports = (title, content, ok, cancel) => {
+  if (!document.getElementById('modaldialog')) {
+    document.querySelector('body').appendChild(modalContainer())
+  }
   var okDiv = document.getElementById('modal-footer-ok')
   var cancelDiv = document.getElementById('modal-footer-cancel')
   okDiv.innerHTML = (ok && ok.label !== undefined) ? ok.label : 'OK'
@@ -43,4 +49,19 @@ module.exports = (title, content, ok, cancel) => {
 
   okDiv.addEventListener('click', okListenner)
   cancelDiv.addEventListener('click', cancelListenner)
+}
+
+function modalContainer () {
+  return yo`<div id="modaldialog" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2></h2>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <span id="modal-footer-ok">OK</span><span id="modal-footer-cancel">Cancel</span>
+        </div>
+      </div>
+    </div>`
 }
