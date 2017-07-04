@@ -1,4 +1,8 @@
+/* global alert */
 var yo = require('yo-yo')
+var txExecution = require('./execution/txExecution')
+var txFormat = require('./execution/txFormat')
+var txHelper = require('./execution/txHelper')
 const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
@@ -52,7 +56,7 @@ var css = csjs`
     text-align: center;
     height: 32px;
   }
-  .contractNamesDropdown extends ${styles.dropdown} {
+  .contractNames extends ${styles.dropdown} {
     width: 100%;
     height: 32px;
     text-align: center;
@@ -84,10 +88,10 @@ function runTab (container, appAPI, appEvents, opts) {
   <div class="${css.runTabView}" id="runTabView">
     ${settings(appAPI, appEvents)}
     ${legend()}
-    <select class="${css.contractNames} ${css.contractNamesDropdown}"></select>
+    <select class="${css.contractNames} contractNames"></select>
     <div class="${css.buttons}">
-      <div class="${css.atAddress}" onclick=${loadFromAddress(appAPI)}>At Address</div>
-      <div class="${css.create}" onclick=${createInstance(appAPI)}>Create</div>
+      <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
+      <div class="${css.create}" onclick=${function () { createInstance(appAPI) }} >Create</div>
     </div>
   </div>
   `
@@ -100,9 +104,22 @@ function runTab (container, appAPI, appEvents, opts) {
 
 // ADD BUTTONS AT ADDRESS AND CREATE
 function createInstance (appAPI) {
-  // var contractNames = document.querySelector(`.${css.contractNames}`)
-  // var contract = appAPI.getContracts()[contractNames.children[contractNames.selected].innerText]
-  // appAPI.createContract(contract, function () { console.log(contract) })
+  var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
+  var contracts = appAPI.getContracts()
+  var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
+  var constructor = txHelper.getConstructorInterface(contracts)
+  var args = '' // TODO retrieve input parameter
+  txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), appAPI.executionContext(), (error, data) => {
+    if (!error) {
+      txExecution.createContract(data, appAPI.udapp(), (error, result) => {
+        // TODO here should send the result to the dom-console
+        console.log(error, result)
+        alert(error + ' ' + result.transactionHash)
+      })
+    } else {
+      alert(error)
+    }
+  })
 }
 function loadFromAddress (appAPI) {
   // var contractNames = document.querySelector(`.${css.contractNames}`)
@@ -112,7 +129,7 @@ function loadFromAddress (appAPI) {
 
 // GET NAMES OF ALL THE CONTRACTS
 function getContractNames (success, data) {
-  var contractNames = document.querySelector(`.${css.contractNames}`)
+  var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
   contractNames.innerHTML = ''
   if (success) {
     for (var name in data.contracts) {
