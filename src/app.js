@@ -461,9 +461,6 @@ var run = function () {
     resetDapp: (udappContracts, renderOutputModifier) => {
       udapp.reset(udappContracts, transactionContextAPI, renderOutputModifier)
     },
-    renderDapp: () => {
-      return udapp.render()
-    },
     getAccounts: (callback) => {
       udapp.getAccounts(callback)
     },
@@ -571,6 +568,15 @@ var run = function () {
     },
     executionContextProvider: () => {
       return executionContext.getProvider()
+    },
+    getContracts: () => {
+      return compiler.lastCompilationResult.data.contracts
+    },
+    udapp: () => {
+      return udapp
+    },
+    executionContext: () => {
+      return executionContext
     }
   }
   var rhpEvents = {

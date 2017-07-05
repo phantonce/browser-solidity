@@ -1,4 +1,8 @@
+/* global alert */
 var yo = require('yo-yo')
+var txExecution = require('./execution/txExecution')
+var txFormat = require('./execution/txFormat')
+var txHelper = require('./execution/txHelper')
 const copy = require('clipboard-copy')
 
 // -------------- styling ----------------------
@@ -74,6 +78,9 @@ var css = csjs`
     background-color: ${styles.colors.lightRed};
     text-align: center;
   }
+  .instances {
+    color: red;
+  }
 `
 
 module.exports = runTab
@@ -88,9 +95,10 @@ function runTab (container, appAPI, appEvents, opts) {
     ${legend()}
     <select class="${css.contractNames}"></select>
     <div class="${css.buttons}">
-      <div class="${css.atAddress}" onclick=${loadFromAddress(appAPI)}>At Address</div>
-      <div class="${css.create}" onclick=${createInstance(appAPI)}>Create</div>
+      <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
+      <div class="${css.create}" onclick=${function () { createInstance(appAPI) }} >Create</div>
     </div>
+    <div class="${css.instances}"></div>
   </div>
   `
   container.appendChild(el)
@@ -102,29 +110,42 @@ function runTab (container, appAPI, appEvents, opts) {
 
 // ADD BUTTONS AT ADDRESS AND CREATE
 function createInstance (appAPI) {
-  // var contractNames = document.querySelector(`.${css.contractNames}`)
-  // var contract = appAPI.getContracts()[contractNames.children[contractNames.selected].innerText]
-  // appAPI.createContract(contract, function () { console.log(contract) })
+  var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
+  var contracts = appAPI.getContracts()
+  var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
+  var constructor = txHelper.getConstructorInterface(contracts)
+  var args = '' // TODO retrieve input parameter
+  txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), appAPI.executionContext(), (error, data) => {
+    if (!error) {
+      txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
+        // TODO here should send the result to the dom-console
+        console.log(error, txResult)
+        alert(error + ' ' + txResult.transactionHash)
+        var instances = document.querySelector(`.${css.instances}`)
+        var address = appAPI.executionContext().isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+        instances.appendChild(appAPI.udapp().renderInstance(contract, address))
+      })
+    } else {
+      alert(error)
+    }
+  })
 }
 function loadFromAddress (appAPI) {
-  // var contractNames = document.querySelector(`.${css.contractNames}`)
-  // var contract = appAPI.getContracts()[contractNames.children[contractNames.selected].innerText]
-  // appAPI.loadContract(contract, function () { console.log(contract) })
+  var instances = document.querySelector(`.${css.instances}`)
+  var address = // we get that from user (pop-up or...)
+  instances.appendChild(appAPI.udapp().renderInstance(contract, address))
 }
 
 // GET NAMES OF ALL THE CONTRACTS
 function getContractNames (success, data) {
   var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-  console.log('contractNames', contractNames)
   contractNames.innerHTML = ''
   if (success) {
     for (var name in data.contracts) {
       contractNames.appendChild(yo`<option>${name}</option>`)
-      console.log('contractNames after success', contractNames)
     }
   } else {
     contractNames.appendChild(yo`<option></option>`)
-    console.log('contractNames else of success', contractNames)
   }
 }
 
