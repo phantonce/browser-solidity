@@ -119,7 +119,7 @@ function createInstance (appAPI) {
     if (!error) {
       txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
         // TODO here should send the result to the dom-console
-        console.log(error, txResult)
+        console.log('contract creation', error, txResult)
         alert(error + ' ' + txResult.transactionHash)
         var instances = document.querySelector(`.${css.instances}`)
         var address = appAPI.executionContext().isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
