@@ -45,7 +45,7 @@ var css = csjs`
   }
   .copyaddress {
     color: #C6CFF7;
-    margin-right: 0.5em;
+    margin-left: 0.5em;
     margin-top: 0.7em;
     cursor: pointer;
   }
@@ -53,23 +53,21 @@ var css = csjs`
     opacity: .7;
   }
   .selectAddress extends ${styles.dropdown} {
-    width: 80%;
+    width: 64%;
     float: left;
     text-align: center;
   }
   .instanceContainer extends ${styles.displayBox}  {
     margin-top: 5%;
   }
-  .instance {
-    color: red;
-  }
   .container extends ${styles.displayBox} {
     margin: 0;
   }
   .contractNames extends ${styles.dropdown} {
-    padding: 15px 8px;
     height: 32px;
+    font-size: 12px;
     width: 100%;
+    font-weight: bold;
     background-color: ${styles.colors.blue};
   }
   .buttons {
@@ -101,7 +99,7 @@ var css = csjs`
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     width: 245px;
-    font-size: 9px;
+    font-size: 10px;
     padding-left: 10px;
   }
   .noInstancesText {
@@ -115,7 +113,6 @@ var css = csjs`
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    width: 350px;
     height: 25px;
     padding: 15px 8px;
   }
@@ -173,7 +170,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
       <div class="${css.buttons}">
         <div class="${css.button}">
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
-          <input class="${css.input}" placeholder="Your contract's blockchain address - i.e. 0x60606..." title="atAddress" />
+          <input class="${css.input}" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />
         </div>
         <div class="${css.button}">
           <div class="${css.create}" onclick=${function () { createInstance(appAPI) }} >Create</div>
@@ -266,8 +263,8 @@ function settings (appAPI, appEvents) {
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Account</div>
-        <i title="Copy Address" class="copytxorigin fa fa-clipboard ${css.copyaddress}" onclick=${copyAddress} aria-hidden="true"></i>
         <select name="txorigin" class="${css.selectAddress}" id="txorigin"></select>
+        <i title="Copy Address" class="copytxorigin fa fa-clipboard ${css.copyaddress}" onclick=${copyAddress} aria-hidden="true"></i>
       </div>
       <div class="${css.crow}">
         <div class="${css.col1_1}">Gas limit</div>

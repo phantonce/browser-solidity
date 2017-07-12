@@ -26,6 +26,10 @@ var css = csjs`
       font-size: 1em;
       text-align: center;
   }
+  .optionViews {
+    background-color: #F4F6FF;
+    overflow: scroll;
+  }
 `
 
 // ------------------------------------------------------------------
@@ -33,24 +37,22 @@ var css = csjs`
 module.exports = RighthandPanel
 
 function RighthandPanel (container, appAPI, events, opts) {
-  var optionViews = yo`<div id="optionViews" class="settingsView"></div>`
+  var optionViews = yo`<div id="optionViews" class="${css.optionViews}"></div>`
   var element = yo`
     <div id="righthand-panel">
-      <div id="header">
-        <div id="menu">
-          <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
-          <ul id="options">
-            <li class="compileView" title="Compile">Compile</li>
-            <li class="runView" title="Run">Run</li>
-            <li class="settingsView" title="Settings">Settings</li>
-            <li class="publishView" title="Files" >Files</li>
-            <li class="debugView" title="Debugger">Debugger</li>
-            <li class="staticanalysisView" title="Static Analysis">Analysis</li>
-            <li id="helpButton"><a href="https://remix.readthedocs.org" target="_blank" title="Open Documentation">Docs</a></li>
-          </ul>
-        </div>
-        ${optionViews}
+      <div id="menu">
+        <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
+        <ul id="options">
+          <li class="compileView" title="Compile">Compile</li>
+          <li class="runView" title="Run">Run</li>
+          <li class="settingsView" title="Settings">Settings</li>
+          <li class="publishView" title="Files" >Files</li>
+          <li class="debugView" title="Debugger">Debugger</li>
+          <li class="staticanalysisView" title="Static Analysis">Analysis</li>
+          <li id="helpButton"><a href="https://remix.readthedocs.org" target="_blank" title="Open Documentation">Docs</a></li>
+        </ul>
       </div>
+      ${optionViews}
     </div>
   `
   compileTab(optionViews, appAPI, events, opts)
@@ -61,7 +63,7 @@ function RighthandPanel (container, appAPI, events, opts) {
   filesTab(optionViews, appAPI, events, opts)
   container.appendChild(element)
 
-  ;[...container.querySelectorAll('#header #options li')].forEach((el) => { el.classList.add(css.options) })
+  ;[...container.querySelectorAll('#righthand-panel #options li')].forEach((el) => { el.classList.add(css.options) })
 
   // ----------------- toggle right hand panel -----------------
 
