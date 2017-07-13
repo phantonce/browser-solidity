@@ -30,17 +30,18 @@ var css = csjs`
     align-self: center;
   }
   .col1_1 extends ${styles.titleM} {
-    width: 30%;
+    font-size: 12px;
+    width: 25%;
     min-width: 50px;
     float: left;
     align-self: center;
   }
   .col2 extends ${styles.inputField}{
-    width: 70%;
+    width: 75%;
     float: left;
   }
   .select extends ${styles.dropdown} {
-    width: 70%;
+    width: 75%;
     float: left;
     text-align: center;
   }
@@ -54,7 +55,7 @@ var css = csjs`
     opacity: .7;
   }
   .selectAddress extends ${styles.dropdown} {
-    width: 64%;
+    width: 70%;
     float: left;
     text-align: center;
   }
@@ -175,7 +176,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
           <input class="${css.input}" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />
         </div>
         <div class="${css.button}">
-          <div class="${css.create}" onclick=${function () { createInstance(appAPI) }} >Create</div>
+          <div class="${css.create}" onclick=${function () { createInstance() }} >Create</div>
           <input class="${css.input}" placeholder="uint8 _numProposals" title="create" />
         </div>
       </div>

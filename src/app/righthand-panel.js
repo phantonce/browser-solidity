@@ -18,11 +18,10 @@ var css = csjs`
   .options {
       float: left;
       padding-top: 0.7em;
-      min-width: 65px;
+      min-width: 60px;
       font-size: 0.9em;
       cursor: pointer;
       background-color: ${styles.colors.transparent};
-      margin-right: 0.5em;
       font-size: 1em;
       text-align: center;
   }
@@ -37,7 +36,6 @@ function RighthandPanel (container, appAPI, events, opts) {
   var element = yo`
     <div id="righthand-panel">
       <div id="menu">
-        <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
         <ul id="options">
           <li class="compileView" title="Compile">Compile</li>
           <li class="runView" title="Run">Run</li>
@@ -47,6 +45,7 @@ function RighthandPanel (container, appAPI, events, opts) {
           <li class="staticanalysisView" title="Static Analysis">Analysis</li>
           <li id="helpButton"><a href="https://remix.readthedocs.org" target="_blank" title="Open Documentation">Docs</a></li>
         </ul>
+        <img id="solIcon" title="Solidity realtime compiler and runtime" src="assets/img/remix_logo_512x512.svg" alt="Solidity realtime compiler and runtime">
       </div>
       ${optionViews}
     </div>
