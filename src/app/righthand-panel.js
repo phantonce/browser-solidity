@@ -26,10 +26,6 @@ var css = csjs`
       font-size: 1em;
       text-align: center;
   }
-  .optionViews {
-    background-color: #F4F6FF;
-    overflow: scroll;
-  }
 `
 
 // ------------------------------------------------------------------

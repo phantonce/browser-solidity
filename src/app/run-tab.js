@@ -18,6 +18,7 @@ var css = csjs`
   }
   .settings extends ${styles.displayBox} {
     margin-bottom: 5%;
+    padding: 10px 15px 15px 15px;
   }
   .crow {
     margin-top: .5em;
@@ -58,7 +59,10 @@ var css = csjs`
     text-align: center;
   }
   .instanceContainer extends ${styles.displayBox}  {
-    margin-top: 5%;
+    display: flex;
+    flex-direction: column;
+    background-color: ${styles.colors.lightBlue};
+    margin-top: 3%;
   }
   .container extends ${styles.displayBox} {
     margin: 0;
@@ -75,34 +79,32 @@ var css = csjs`
     cursor: pointer;
     justify-content: center;
     flex-direction: column;
-    margin: 1%;
     text-align: center;
     font-size: 12px;
   }
   .button {
     display: flex;
     align-items: flex-end;
+    margin-top: 2%;
   }
   .atAddress extends ${styles.button} {
     background-color: ${styles.colors.green};
-    margin-top: 10px;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
   .create extends ${styles.button} {
     background-color: ${styles.colors.lightRed};
-    margin-top: 10px;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
   .input extends ${styles.inputField} {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    width: 245px;
+    width: 75%;
     font-size: 10px;
     padding-left: 10px;
   }
-  .noInstancesText {
+  .noInstancesText extends ${styles.displayBox} {
     text-align: center;
     color: ${styles.colors.lightGrey};
     font-style: italic;
@@ -122,11 +124,11 @@ var css = csjs`
     align-items: center;
   }
   .transact {
-    color: #FFB9B9;
+    color: ${styles.colors.lightRed};
     margin-right: .3em;
   }
   .payable {
-    color: #FF8B8B;
+    color: ${styles.colors.red};
     margin-right: .3em;
   }
   .call {
@@ -179,7 +181,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
       </div>
     </div>
   `
-
+  var init = false
   // ADD BUTTONS AT ADDRESS AND CREATE
   function createInstance () {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
@@ -193,7 +195,10 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
           // TODO here should send the result to the dom-console
           //console.log('contract creation', error, txResult)
           var address = appAPI.executionContext().isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
-          if (instanceContainer.querySelector(`.${css.noInstancesText}`)) instanceContainer.removeChild(noInstancesText)
+          if (!init) {
+            instanceContainer.innerHTML = ''
+            init = true
+          }
           instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address))
         })
       } else {

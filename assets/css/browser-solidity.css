@@ -128,7 +128,7 @@ body {
 #righthand-panel {
     position: absolute;
     top: 0;
-    width: 37em;
+    width: 34em;
     max-width: 80vw;
     right: 0;
     bottom: 0;
@@ -176,7 +176,8 @@ body {
 
 #righthand-panel #optionViews {
     background-color: #F4F6FF;
-    overflow: scroll
+    overflow: scroll;
+    min-height: 100%;
 }
 
 #righthand-panel #optionViews > div {
