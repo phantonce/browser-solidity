@@ -167,17 +167,20 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     getContractNames(success, DATA)
   })
 
+  var atAddressButtonInput = yo`<input class="${css.input}" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />`
+  var createButtonInput = yo`<input class="${css.input}" placeholder="uint8 _numProposals" title="create" />`
+  var selectContractNames = yo`<select class="${css.contractNames}"></select>`
   var el = yo`
     <div class="${css.container}">
-      <select class="${css.contractNames}"></select>
+      ${selectContractNames}
       <div class="${css.buttons}">
         <div class="${css.button}">
           <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
-          <input class="${css.input}" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />
+          ${atAddressButtonInput}
         </div>
         <div class="${css.button}">
           <div class="${css.create}" onclick=${function () { createInstance() }} >Create</div>
-          <input class="${css.input}" placeholder="uint8 _numProposals" title="create" />
+          ${createButtonInput}
         </div>
       </div>
     </div>
@@ -189,18 +192,20 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     var contracts = appAPI.getContracts()
     var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
     var constructor = txHelper.getConstructorInterface(contracts)
-    var args = '' // TODO retrieve input parameter
+    var selectedContractName = selectContractNames.value
+    console.log(selectedContractName)
+    var args = createButtonInput.value
     txFormat.buildData(contract, contracts, true, constructor, args, appAPI.udapp(), appAPI.executionContext(), (error, data) => {
       if (!error) {
         txExecution.createContract(data, appAPI.udapp(), (error, txResult) => {
           // TODO here should send the result to the dom-console
-          //console.log('contract creation', error, txResult)
+          console.log('Contract creation', error, txResult)
           var address = appAPI.executionContext().isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
           if (!init) {
             instanceContainer.innerHTML = ''
             init = true
           }
-          instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address))
+          instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address, selectedContractName))
         })
       } else {
         alert(error)
@@ -215,7 +220,6 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
   // GET NAMES OF ALL THE CONTRACTS
   function getContractNames (success, data) {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
-    console.log(contractNames)
     contractNames.innerHTML = ''
     if (success) {
       for (var name in data.contracts) {
