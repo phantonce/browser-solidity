@@ -159,16 +159,15 @@ function runTab (container, appAPI, appEvents, opts) {
 ------------------------------------------------ */
 
 function contractDropdown (appAPI, appEvents, instanceContainer) {
-
   var noInstancesText = yo`<div class="${css.noInstancesText}">No Contract Instances.</div>`
   instanceContainer.appendChild(noInstancesText)
 
-  appEvents.compiler.register('compilationFinished', function (success, DATA, source) {
-    getContractNames(success, DATA)
+  appEvents.compiler.register('compilationFinished', function (success, data, source) {
+    getContractNames(success, data)
   })
 
-  var atAddressButtonInput = yo`<input class="${css.input}" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />`
-  var createButtonInput = yo`<input class="${css.input}" placeholder="uint8 _numProposals" title="create" />`
+  var atAddressButtonInput = yo`<input class="${css.input} ataddressinput" placeholder="Enter contract's address - i.e. 0x60606..." title="atAddress" />`
+  var createButtonInput = yo`<input class="${css.input}" placeholder="" title="create" />`
   var selectContractNames = yo`<select class="${css.contractNames}"></select>`
   var el = yo`
     <div class="${css.container}">
@@ -185,13 +184,31 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
       </div>
     </div>
   `
+
+  function setInputParamsPlaceHolder () { 
+    createButtonInput.value = ''
+    if (appAPI.getContracts()) {
+      var contract = appAPI.getContracts()[selectContractNames.children[selectContractNames.selectedIndex].innerText]
+      var ctrabi = txHelper.getConstructorInterface(contract.interface)
+      if (ctrabi.inputs.length) {
+        createButtonInput.setAttribute('placeholder', txHelper.inputParametersDeclarationToString(ctrabi.inputs))
+        createButtonInput.removeAttribute('disabled')
+        return
+      }
+    }
+    createButtonInput.setAttribute('placeholder', '')
+    createButtonInput.setAttribute('disabled', true)
+  }
+
+  selectContractNames.addEventListener('change', setInputParamsPlaceHolder)
+
   var init = false
   // ADD BUTTONS AT ADDRESS AND CREATE
   function createInstance () {
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var contracts = appAPI.getContracts()
     var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
-    var constructor = txHelper.getConstructorInterface(contracts)
+    var constructor = txHelper.getConstructorInterface(contract.interface)
     var selectedContractName = selectContractNames.value
     console.log(selectedContractName)
     var args = createButtonInput.value
@@ -212,9 +229,12 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
       }
     })
   }
-  function loadFromAddress () {
-    // var address = // we get that from user (pop-up or...)
-    // instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address))
+
+  function loadFromAddress (appAPI) {
+    var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
+    var contract = appAPI.getContracts()[contractNames.children[contractNames.selectedIndex].innerText]
+    var address = atAddressButtonInput.value
+    instanceContainer.appendChild(appAPI.udapp().renderInstance(contract, address))
   }
 
   // GET NAMES OF ALL THE CONTRACTS
@@ -228,6 +248,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     } else {
       contractNames.appendChild(yo`<option></option>`)
     }
+    setInputParamsPlaceHolder()
   }
 
   return el
@@ -312,7 +333,6 @@ function settings (appAPI, appEvents) {
               section  LEGEND
 ------------------------------------------------ */
 function legend () {
-
   var el =
   yo`
     <div class="${css.legend}">
