@@ -185,7 +185,7 @@ function contractDropdown (appAPI, appEvents, instanceContainer) {
     </div>
   `
 
-  function setInputParamsPlaceHolder () { 
+  function setInputParamsPlaceHolder () {
     createButtonInput.value = ''
     if (appAPI.getContracts()) {
       var contract = appAPI.getContracts()[selectContractNames.children[selectContractNames.selectedIndex].innerText]
